@@ -25,6 +25,12 @@ python3 fake_switch.py
 python3 visualizer.py
 ```
 
+> **macOS note:** the system Python (`/usr/bin/python3`) ships a broken **Tk 8.5**
+> whose canvas renders blank. `visualizer.py` detects this and automatically uses the
+> **terminal map** (`--tui`) instead — no flags needed. To get the graphical window,
+> install python.org or Homebrew Python (Tk 8.6+) and pass `--force-gui`, or just use
+> `--tui` everywhere (works on any system, even headless/SSH).
+
 **B) Record a session, then hunt addresses offline:**
 ```bash
 # terminal 1
