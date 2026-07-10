@@ -111,12 +111,23 @@ uses. It **merges** individual mods into one conflict-free LayeredFS output:
 - Output: a merged mod folder to drop into `atmosphere/contents/0100F2C0115B6000/`
   (`romfs`/`romfslite`).
 
-### Rules for OUR mod hosting (Phase 7b)
-- Distribute mods as **TKMM-compatible packages** (prefer `.tkcl`); let clients merge
-  via TKMM rather than reinventing merging/RESTBL logic.
-- Every hosted mod is **version-locked to 1.4.2** — reject/flag mismatches.
-- Always ship/patch a **correct merged RESTBL**; never distribute size-changing assets
-  without it (crash risk).
+### Rules for OUR mod hosting (Phase 7b) — Minecraft-style modpack matching
+Server is authoritative over *which* mods everyone runs. This is a **sync correctness
+requirement**, not just a feature: divergent content mods make players' worlds diverge
+and break state sync. It is NOT server-side mod *execution* — impossible, since TOTK
+content mods are boot-time LayeredFS asset swaps with no runtime for the server to
+simulate.
+
+- A server defines **ONE canonical, pre-merged modpack**: merged once by the host via
+  **TKMM** (RESTBL-correct, load-order-resolved), identified by a **hash**.
+- **Version-lock everything to 1.4.2**; reject mismatches.
+- On join, client reports its modpack hash; **mismatch → refuse to play** (kick) and
+  offer the canonical pack.
+- Distribute the **pre-merged bytes** (drop into `atmosphere/contents/0100F2C0115B6000/`,
+  then **relaunch** the game). Pre-merging means **Switch-only players need no TKMM**.
+- Always ship a **correct merged RESTBL** (size-changing assets without it = crash).
 - Enforce **Atmosphère ≥ 1.5.4** on clients.
+- **Mods can't hot-swap** (LayeredFS is boot-time): "match before you play," not live
+  streaming; changing the pack = download + relaunch.
 - Keep content-mod distribution separate from the multiplayer sysmodule; a server may
   serve both, but they install to different places and load by different mechanisms.

@@ -248,10 +248,23 @@ now**, ahead of hardware — but each has a real wall to respect.
 - **7a — Host a server (goal 1).** Make `server.py` publicly reachable: run on a
   VPS, or add NAT hole-punching / a relay for home hosting. Add join codes + auth.
   *[server logic done; needs a reachability layer]*
-- **7b — Host mods on the server (goal 2).** A **mod registry**: the server serves
-  signed manifests + files; clients fetch and apply on join, version-locked to the
-  game version. *[server-side buildable now; apply path console-gated; SCOPE TBD —
-  our multiplayer configs/address-maps vs. general TOTK content mods?]*
+- **7b — Host mods on the server (goal 2), Minecraft-style modpack matching.**
+  Server-authoritative *which mods* everyone runs — **required for clean sync**, since
+  divergent content mods make worlds diverge and break state sync. NOT server-side mod
+  *execution* (impossible: TOTK content mods are boot-time LayeredFS asset swaps with
+  no runtime for the server to simulate).
+  - Server holds **ONE canonical, pre-merged modpack** (merged once by the host via
+    TKMM: RESTBL-correct, load-order-resolved), **locked to 1.4.2**, identified by a
+    **hash**.
+  - On join, client reports its modpack hash; **mismatch → refuse to play** (kick),
+    offer the canonical pack for download.
+  - Client downloads the **pre-merged bytes**, drops them into
+    `atmosphere/contents/0100F2C0115B6000/`, **relaunches**, rejoins → byte-identical.
+  - Pre-merged distribution means **Switch-only players need no TKMM** (a PC tool);
+    the host merges once, everyone consumes identical output.
+  - Caveat vs Minecraft: **mods can't hot-swap** (LayeredFS is boot-time) — "match
+    before you play," not live mod streaming; changing the pack = download + relaunch.
+  *[registry/hosting buildable now; apply+relaunch console-gated]*
 - **7c — More than 2 players (goal 3).** Server is **already N-player** (verified
   with 6 fake players, 4060 relays, 0 rejected). Walls are console-side: O(n²) relay
   bandwidth and rendering many ghost actors on a weak Switch. Add **relevancy
