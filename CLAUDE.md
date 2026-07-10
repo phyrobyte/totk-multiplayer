@@ -45,6 +45,8 @@ Switch-only players can join. See ROADMAP for phases and the platform tier (Phas
   `visualizer.py` (live map), `protocol.py` (shared).
 - `pc-server/` — `server.py`, the authoritative buffer/host (validates, tracks, relays).
 - `sysmodule/` — thin Atmosphère memory-pipe skeleton (C/libnx), built on-console later.
+- `docs/re-notes.md` — reverse-engineering intel (community pointer chains, format
+  primer, 1.4.2 leads) to jump-start the real address hunt. Hypotheses, not confirmed.
 
 ## How to verify (there are two regimes)
 
