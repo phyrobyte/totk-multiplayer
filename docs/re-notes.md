@@ -50,21 +50,47 @@ Deep chain into equipment data (structure reference, lower priority for us):
 580F0000 046B9AD8 → +0x480 → +0x228 → +0x230 → +0x70 → +0x40 → +0x228 → +0x2F8 ...
 ```
 
-## Known 1.4.2 build ID (confirm against your console)
+## Build-ID table (per version, confirm region against your console)
 
-From an exefs IPS patch shared in the 1.4.2 cheats thread (IPS files are named by the
-target NSO build ID):
+NSO build IDs cheat tables/patches are keyed by. Build IDs are **region-specific**
+(US/EU/JP differ) — verify against the BID shown atop the EdiZon-SE overlay in-game.
 
-```
-build_id (1.4.2, region TBD): 5CB42B1CF25469FB0635FD046453D843C18BC8AB
-```
+| Version | Build ID | Source |
+|---------|----------|--------|
+| 1.0.0 | `082CE09B06E33A12` | MaxLastBreath |
+| 1.1.0 | `D5AD6AC71EF53E3E` | MaxLastBreath |
+| 1.1.1 | `168DD518D925C7A3` (also `9B4E43650501A4D4`, other region) | MaxLastBreath / Arithon |
+| 1.1.2 | `9A10ED9435C06733` | MaxLastBreath |
+| 1.2.0 | `6F32C68DD3BC7D77AA714B80E92A096A737CDA77` | UltraCam pchtxt |
+| **1.4.2** | **`5CB42B1CF25469FB0635FD046453D843C18BC8AB`** | user IPS (region TBD) |
 
-- Goes in `config/addresses.1.4.2.json` `build_id` once confirmed.
-- Build IDs are **region-specific** (US/EU/JP differ) — verify it matches the BID shown
-  at the top of the EdiZon-SE overlay in-game before trusting it.
+- Our target's ID goes in `config/addresses.1.4.2.json` `build_id` once confirmed.
 - Cheat `.txt` files must be named `<BID>.txt` in `atmosphere/contents/0100F2C0115B6000/cheats/`.
-- Note: exefs IPS files are **code patches** (behavior mods), NOT data-address sources —
-  the multiplayer data we need comes from `58`-type pointer-chain cheat codes or our own scan.
+
+## State of PUBLIC data-pointer availability (researched)
+
+**There is no clean, portable, public player-position *data pointer* for 1.4.2**, and
+little for older versions. What exists and why it falls short:
+
+- **MaxLastBreath / Arithon / UltraCam cheat sets** (versions ≤1.3.x): all **code
+  patches** (`040E0000 <off> <instr>` / `040A0000 ...`) that NOP game code — NOT data
+  pointers. Even "movement speed" writes a code-region constant, not the player struct.
+- **FearLess Cheat Engine tables** (fearlessrevolution.com, Ryujinx): DO have real XYZ
+  teleport + health **pointers**, but are **emulator-only** (AOB scans, not portable to
+  an on-console sysmodule), login-walled, and versions ≤1.2.
+- **UltraCam freecam**: reads/writes player+camera position live, but the logic is in a
+  **compiled subsdk binary**, not readable pchtxt.
+
+**Conclusion:** for 1.4.2 on-console we **port the Moon-Jump pointer-chain *structure*
+(above) and re-find the base pointer ourselves** via EdiZon-SE pointer scan + our
+record→analyze→confirm loop. The community gives us the struct *shape* and the *build
+ID*, not a ready-made 1.4.2 pointer.
+
+### Sources to revisit
+- `github.com/MaxLastBreath/TOTK-mods` — upstream cheat repo (code patches, ≤1.3.x).
+- `github.com/Fl4sh9174/TOTK-mods` — UltraCam (freecam/position, compiled).
+- `fearlessrevolution.com` TOTK CE tables — real XYZ/health pointers (emulator, ≤1.2).
+- GBAtemp "ToTK Cheats – 1.4.2 only" (MopSec) — our version; watch for `58`-type pointer codes.
 
 ## Leads to chase when the console is modded
 
