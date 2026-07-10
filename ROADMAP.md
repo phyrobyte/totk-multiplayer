@@ -98,8 +98,11 @@ exists we just plug it in.
       addresses + pointer chains + validation ranges.
 - [ ] **Version pin doc** — decide and record the exact TOTK version to target.
 
-**GATE 0:** Fake sysmodule → PC receiver → recorder → analyzer → visualizer all run
-end-to-end on synthetic data. *We can now onboard real memory instantly.*
+**GATE 0 — ✅ PASSED:** Fake sysmodule → PC receiver → recorder → analyzer →
+visualizer all run end-to-end on synthetic data (analyzer finds 6/6 planted fields;
+visualizer renders via terminal TUI). The **authoritative PC server** (Phase 4 core)
+is also built early and verified relaying/validating two fake players. *We can now
+onboard real memory instantly.*
 
 ---
 

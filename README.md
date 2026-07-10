@@ -95,9 +95,11 @@ See [`pc-tools/README.md`](pc-tools/README.md) for details.
 
 ## Status
 
-Phase 0 (foundations / PC pipeline) — **in progress**. Console-dependent phases
-(real addresses, ghost actor, two-player sync) begin once the hardware is modded.
-Target game version is pinned to **1.4.2**.
+Phase 0 (foundations / PC pipeline) — **✅ done & verified**: fake console →
+recorder → analyzer (finds 6/6 planted fields) → live map, plus an authoritative PC
+server relaying/validating two fake players. Console-dependent phases (real
+addresses, ghost actor, two-player sync) begin once the hardware is modded. Target
+game version is pinned to **1.4.2**.
 
 ## Requirements
 
