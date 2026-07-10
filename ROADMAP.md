@@ -240,6 +240,37 @@ other — the federation vision realized.
 
 ---
 
+## Phase 7 — Platform & community (the "complete setup")
+
+The community-facing goals. Mostly **server/cloud side, so buildable and testable
+now**, ahead of hardware — but each has a real wall to respect.
+
+- **7a — Host a server (goal 1).** Make `server.py` publicly reachable: run on a
+  VPS, or add NAT hole-punching / a relay for home hosting. Add join codes + auth.
+  *[server logic done; needs a reachability layer]*
+- **7b — Host mods on the server (goal 2).** A **mod registry**: the server serves
+  signed manifests + files; clients fetch and apply on join, version-locked to the
+  game version. *[server-side buildable now; apply path console-gated; SCOPE TBD —
+  our multiplayer configs/address-maps vs. general TOTK content mods?]*
+- **7c — More than 2 players (goal 3).** Server is **already N-player** (verified
+  with 6 fake players, 4060 relays, 0 rejected). Walls are console-side: O(n²) relay
+  bandwidth and rendering many ghost actors on a weak Switch. Add **relevancy
+  culling** (only sync nearby players). Realistic target ~4–8.
+  *[server done; console-limited]*
+- **7d — Public/private server list (goal 4).** A master **directory service**:
+  servers register; clients list public servers or join private ones by code. Needs
+  moderation + reporting. *[buildable now, console-independent]*
+
+**Risks specific to this tier:** a **public** listing sharply raises Nintendo-
+takedown exposure vs. a private repo (BotW's multiplayer scene was DMCA'd) — favor
+private/invite-first. N-ghost rendering on real hardware is unproven. A public list
+carries an ongoing moderation burden.
+
+**GATE 7:** A hosted server, discoverable via the directory, runs a >2-player session
+with mods distributed from the server — the whole setup, end to end.
+
+---
+
 ## Cross-cutting: the address-hunting workflow (used in Phases 1–3, 5)
 
 This is the engine of the whole project, so it's called out separately:
