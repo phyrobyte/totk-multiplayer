@@ -50,6 +50,22 @@ Deep chain into equipment data (structure reference, lower priority for us):
 580F0000 046B9AD8 → +0x480 → +0x228 → +0x230 → +0x70 → +0x40 → +0x228 → +0x2F8 ...
 ```
 
+## Known 1.4.2 build ID (confirm against your console)
+
+From an exefs IPS patch shared in the 1.4.2 cheats thread (IPS files are named by the
+target NSO build ID):
+
+```
+build_id (1.4.2, region TBD): 5CB42B1CF25469FB0635FD046453D843C18BC8AB
+```
+
+- Goes in `config/addresses.1.4.2.json` `build_id` once confirmed.
+- Build IDs are **region-specific** (US/EU/JP differ) — verify it matches the BID shown
+  at the top of the EdiZon-SE overlay in-game before trusting it.
+- Cheat `.txt` files must be named `<BID>.txt` in `atmosphere/contents/0100F2C0115B6000/cheats/`.
+- Note: exefs IPS files are **code patches** (behavior mods), NOT data-address sources —
+  the multiplayer data we need comes from `58`-type pointer-chain cheat codes or our own scan.
+
 ## Leads to chase when the console is modded
 
 1. **MopSec's "ToTK Cheats – 1.4.2 only" (GBAtemp, Jun 2026)** — our exact version. If
