@@ -1,0 +1,16 @@
+{
+  "_comment": "Ground-truth memory layout for the FAKE switch simulator. This is an instance of the same schema real addresses.<version>.json will use. fake_switch.py plants values at these offsets; visualizer.py reads them; analyzer.py --verify checks its findings against them.",
+  "region": {
+    "name": "sim_main",
+    "base_offset": 0,
+    "size": 128
+  },
+  "fields": {
+    "pos_x": { "offset": 16, "type": "f32", "min": -6000.0, "max": 6000.0, "role": "coordinate" },
+    "pos_y": { "offset": 20, "type": "f32", "min": -3000.0, "max": 3000.0, "role": "coordinate" },
+    "pos_z": { "offset": 24, "type": "f32", "min": -6000.0, "max": 6000.0, "role": "coordinate" },
+    "yaw":   { "offset": 32, "type": "f32", "min": -3.15,   "max": 3.15,   "role": "rotation" },
+    "anim":  { "offset": 40, "type": "u32", "min": 0,       "max": 500,    "role": "state" },
+    "hp":    { "offset": 48, "type": "u32", "min": 0,       "max": 3000,   "role": "health" }
+  }
+}

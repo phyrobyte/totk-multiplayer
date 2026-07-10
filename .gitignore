@@ -1,0 +1,25 @@
+# Recorded sessions (can be large; regenerate as needed)
+recordings/
+*.jsonl
+
+# Real address maps may reveal specifics — keep local, ship only the .example
+config/addresses.*.json
+!config/addresses.*.example.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Switch build artifacts
+sysmodule/build/
+*.nsp
+*.nso
+*.elf
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/

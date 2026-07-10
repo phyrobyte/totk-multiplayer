@@ -1,0 +1,22 @@
+{
+  "_comment": "TEMPLATE for the REAL TOTK 1.4.2 address map. Copy to addresses.1.4.2.json and fill in once the console is modded and the record->analyze->confirm loop finds real offsets. Same schema as sim_layout.json so every tool works unchanged when you swap fake data for real memory.",
+  "game_version": "1.4.2",
+  "build_id": "TODO_from_console",
+  "region": {
+    "name": "main_player_block",
+    "base_offset": "TODO",
+    "size": "TODO"
+  },
+  "pointer_chains": {
+    "_comment": "Raw addresses move every boot (ASLR). Store the stable pointer chain that resolves to the player block. Format: base module + chain of offsets. Filled during Phase 2.",
+    "player_block": { "base": "main+TODO", "chain": ["TODO"] }
+  },
+  "fields": {
+    "pos_x": { "offset": "TODO", "type": "f32", "min": -6000.0, "max": 6000.0, "role": "coordinate", "confirmed": false },
+    "pos_y": { "offset": "TODO", "type": "f32", "min": -3000.0, "max": 3000.0, "role": "coordinate", "confirmed": false },
+    "pos_z": { "offset": "TODO", "type": "f32", "min": -6000.0, "max": 6000.0, "role": "coordinate", "confirmed": false },
+    "yaw":   { "offset": "TODO", "type": "f32", "min": -3.15,   "max": 3.15,   "role": "rotation",   "confirmed": false },
+    "anim":  { "offset": "TODO", "type": "u32", "min": 0,       "max": 5000,   "role": "state",      "confirmed": false },
+    "hp":    { "offset": "TODO", "type": "u32", "min": 0,       "max": 3000,   "role": "health",     "confirmed": false }
+  }
+}

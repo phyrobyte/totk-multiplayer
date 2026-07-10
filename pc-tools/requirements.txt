@@ -1,0 +1,8 @@
+# PC-side tools use the Python standard library only — no pip installs needed.
+#   - socket, struct, json, glob, math, argparse  (stdlib)
+#   - tkinter (stdlib; ships with python.org and Homebrew Python, used by visualizer.py)
+#
+# Requires: Python 3.9+
+#
+# If `import tkinter` fails on your system, install a Python build that includes it
+# (e.g. `brew install python-tk` on macOS).
