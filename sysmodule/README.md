@@ -22,7 +22,7 @@ The packet layout in `main.c` (`totk_header_t`) is byte-identical to
 
 ## What to fill in
 
-- `REGION_BASE` / `REGION_SIZE` — from `config/addresses.1.4.2.json` (Phase 2).
+- `REGION_BASE` / `REGION_SIZE` — from `config/addresses.1.2.1.json` (Phase 2).
 - `PC_HOST` — the PC/server IP.
 - `read_game_memory` / `write_game_memory` — the `dmnt:cht` calls.
 - Pointer-chain resolution so the region survives ASLR across reboots.

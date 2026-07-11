@@ -19,18 +19,19 @@ These apply to every phase. When in doubt, obey these.
 1. **Fail fast at gates.** Each phase ends in a GO/NO-GO milestone that proves the
    *next* phase is possible before we invest in it. If a gate fails, we stop and
    rethink — we never build on an unproven layer.
-2. **Pin the game version to EXACTLY 1.4.2. Never update.** Every TOTK patch
-   relocates memory addresses and can break everything. **Target = 1.4.2**, chosen
-   for being the most stable/bug-fixed/played build per the modding community.
-   Record it in `config/version.json`. Treat updating as a project-ending event.
-   **Critical 1.4.2 gotchas:**
-   - 1.4.3 already exists and is "latest" — hitting *update* lands on 1.4.3, NOT
-     1.4.2. Both consoles must install the *specific* 1.4.2 update file, then stop.
-   - Hard-block auto-updates (via Atmosphère) so neither console drifts to 1.4.3.
-   - 1.4.2 was the Switch 2 / "Zelda Notes" update — use the Switch 1 build and
-     confirm Atmosphère + base firmware support it before committing.
-   - Both consoles must be byte-identical 1.4.2 or the shared address config is
-     invalid.
+2. **Pin the game version to EXACTLY 1.2.1. Never update.** Every TOTK patch
+   relocates memory addresses and can break everything. **Target = 1.2.1**, chosen
+   because the `totk_syms` project (dt-12345, engine syms by watertoon) publishes
+   **136k named function symbols + Ghidra struct types for 1.2.1** — a massive RE
+   head-start that de-risks both the address mapping AND the ghost actor (the two
+   hardest gates). See [docs/re-notes.md](docs/re-notes.md). Record it in
+   `config/version.json`. Treat updating as a project-ending event.
+   **Critical gotchas:**
+   - Newer versions exist (up to 1.4.3); "update" jumps to the latest — both consoles
+     must install the *specific* 1.2.1 update file, then stop.
+   - Hard-block auto-updates (via Atmosphère) so neither console drifts off 1.2.1.
+   - Use the Switch 1 build; confirm Atmosphère + base firmware support it.
+   - Both consoles must be byte-identical 1.2.1 or the shared address config is invalid.
 3. **The Switch stays dumb; the PC holds the brains.** The sysmodule only reads/
    writes RAM and moves bytes. All logic, state, and decisions live on the PC where
    we can iterate in seconds and debug freely.
@@ -254,7 +255,7 @@ now**, ahead of hardware — but each has a real wall to respect.
   *execution* (impossible: TOTK content mods are boot-time LayeredFS asset swaps with
   no runtime for the server to simulate).
   - Server holds **ONE canonical, pre-merged modpack** (merged once by the host via
-    TKMM: RESTBL-correct, load-order-resolved), **locked to 1.4.2**, identified by a
+    TKMM: RESTBL-correct, load-order-resolved), **locked to 1.2.1**, identified by a
     **hash**.
   - On join, client reports its modpack hash; **mismatch → refuse to play** (kick),
     offer the canonical pack for download.

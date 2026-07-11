@@ -1,12 +1,14 @@
 {
   "game": "The Legend of Zelda: Tears of the Kingdom",
-  "target_version": "1.4.2",
+  "target_version": "1.2.1",
   "platform": "Nintendo Switch (v1)",
+  "build_id": "TBD_confirm_on_console (region-specific)",
   "pinned": true,
   "notes": [
-    "Both consoles MUST run byte-identical 1.4.2.",
-    "1.4.3 exists and is 'latest' - do NOT hit update, install the specific 1.4.2 update file then stop.",
-    "Hard-block auto-updates via Atmosphere so neither console drifts to 1.4.3.",
-    "Use the Switch 1 build of 1.4.2; confirm Atmosphere + base firmware support it."
+    "Both consoles MUST run byte-identical 1.2.1.",
+    "Chosen for the totk_syms RE resource: 136k named symbols + Ghidra struct types for 1.2.1 (dt-12345/totk_syms, engine syms by watertoon). See docs/re-notes.md.",
+    "Newer versions exist (up to 1.4.3) - do NOT hit update; install the specific 1.2.1 update file, then stop.",
+    "Hard-block auto-updates via Atmosphere so neither console drifts off 1.2.1.",
+    "Use the Switch 1 build of 1.2.1; confirm Atmosphere + base firmware support it."
   ]
 }

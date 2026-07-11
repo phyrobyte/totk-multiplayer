@@ -30,7 +30,7 @@ import protocol as P  # noqa: E402
 
 DEFAULT_SERVER_PORT = 9920
 PLAYER_TIMEOUT = 5.0     # seconds of silence before a player is dropped
-CONFIG_VERSION = "1.4.2"  # clients must match (stub check via flags/version later)
+CONFIG_VERSION = "1.2.1"  # clients must match (stub check via flags/version later)
 
 
 def validate(buf, fields):

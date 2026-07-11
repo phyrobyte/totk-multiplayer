@@ -1,59 +1,59 @@
-# Reverse-engineering notes (community intel)
+# Reverse-engineering notes
 
-Head-start knowledge for the real address mapping (Phase 1–2). Treat everything here
-as **hypotheses to re-confirm on 1.4.2**, not confirmed facts.
+Head-start knowledge for the real address mapping (Phase 1–2) and the ghost actor
+(Phase 3). **Target version: 1.2.1** — chosen specifically because a real symbol set
+exists for it (below). Treat on-console specifics as **hypotheses to confirm**, not
+gospel.
 
-## ⚠️ Version caveat
+## ⭐ PRIMARY RESOURCE: `totk_syms` (1.2.1 symbols + Ghidra types)
 
-The cheat table these hints come from targets an **old version** (`v393216`,
-~1.1.x/1.2.x, `BID=9B4E43650501A4D4`, `TID=0100F2C0115B6000`). **We are pinned to
-1.4.2.** Base offsets (into the main NSO) WILL differ. Re-find the static base pointer
-on 1.4.2; the **struct-internal offset chains usually survive** minor patches, so reuse
-them as strong starting hypotheses.
+[`github.com/dt-12345/totk_syms`](https://github.com/dt-12345/totk_syms) — symbols and
+Ghidra datatypes for **TOTK 1.2.1** (engine syms largely by **watertoon**). This is
+why we pin 1.2.1. Contents:
 
-## Cheat-code format primer (Atmosphère dmnt VM)
+- `exking_symbols.csv` — **136,279 named functions** (`Address,Name`), e.g.
+  `game::component::Player::calc`. Turns Ghidra from "unnamed blob" into a readable map.
+- `totk.gdt` — **Ghidra Data Type archive**: struct definitions → player/actor struct
+  field offsets are *defined*, not guessed.
+- `data_section.map` — data-section base addresses per module/namespace (vtable/global
+  locations), incl. `game::component`, `engine::actor`, `game::wm`, etc.
+- `func_splits.csv` — function boundary splits.
 
-Same VM our sysmodule uses via `dmnt:cht`. Two kinds appear:
+Engine is **sead-based** (same framework family as BotW), so `zeldaret/botw` +
+`botw-re-notes` knowledge cross-applies.
 
-- **Code patches** — `04 0 M ...  <offset>  <ARM instruction>`. `M=0A`/`0` = the
-  **executable (main NSO)** region; the value is an ARM instruction overwriting game
-  *code* to change behavior (e.g. "inf. health" NOPs the HP-subtract routine).
-  **Not useful for multiplayer** — we need data, not behavior patches.
-- **Pointer-chain data ops** — `58` load pointer / `78` add offset / `64` store float /
-  `80..20` key-conditional. These walk a pointer chain to a **data struct** and read/
-  write a value. **These are what we need.**
+### The functions that matter for us (confirmed present in the symbols)
 
-## Player position struct (from the "Moon Jump" cheat)
-
-The most valuable lead — reveals the pointer path to Link's position/velocity:
-
+Position read/write — de-risks BOTH finding the player position AND the **ghost actor**:
 ```
-580F0000 0471DCB0   ; reg = [main + 0x471DCB0]   <- static base pointer (OLD version)
-580F1000 000000C8   ; reg = [reg + 0xC8]
-580F1000 00000178   ; reg = [reg + 0x178]
-580F1000 00000030   ; reg = [reg + 0x30]
-780F0000 000000FC   ; reg += 0xFC
-640F01D0 .. 41200000 ; [reg + 0x1D0] = 10.0f      <- vertical position/velocity write
-```
-
-**Takeaways for our address hunt:**
-- Player data sits behind a **~4-hop chain** from a static main-NSO pointer.
-- A **Y position/velocity** float lives near `struct + 0xFC + 0x1D0`.
-- Hypothesis for 1.4.2: re-find the static base (EdiZon-SE pointer scan / MopSec's
-  1.4.2 table), then try the `C8 → 178 → 30` chain; X and Z should be adjacent to Y in
-  the same struct (typically ±4/±8, or a nearby vec3).
-
-## Inventory/equipment struct (from "Bow Durability")
-
-Deep chain into equipment data (structure reference, lower priority for us):
-```
-580F0000 046B9AD8 → +0x480 → +0x228 → +0x230 → +0x70 → +0x40 → +0x228 → +0x2F8 ...
+engine::actor::ActorBase::setPosition
+engine::actor::ActorBase::setPositionAndRotationDirect   <- ghost: write pos+rot
+engine::component::PhysicsComponent::forceSetPosition
+phive::RigidBodyBase::requestSetPosition
+game::component::Player::calc                            <- player update entry
+game::component::Player::preCalc / updateTimers / ...    <- 5,895 Player symbols total
+game::wm::WorldManagerModule                             <- singleton -> base pointer lead
 ```
 
-## Build-ID table (per version, confirm region against your console)
+### How to use it (Phase 2–3 workflow)
 
-NSO build IDs cheat tables/patches are keyed by. Build IDs are **region-specific**
-(US/EU/JP differ) — verify against the BID shown atop the EdiZon-SE overlay in-game.
+1. Load TOTK 1.2.1 `main` NSO in **Ghidra** (Switch loader).
+2. Import `totk.gdt` (datatypes) and apply `exking_symbols.csv` names (script).
+3. Open `ActorBase::setPosition` / `setPositionAndRotationDirect` → read which struct
+   offset the position vec3 is written to (cross-check with `totk.gdt` struct layout).
+4. Trace a singleton (`WorldManagerModule` / an ActorSystem) → active player actor to
+   derive the **static base → offset chain** (the ASLR-safe pointer chain).
+5. Confirm on-console with EdiZon-SE (poke → Link moves), write into
+   `config/addresses.1.2.1.json`.
+6. For the **ghost** (Phase 3): the named `setPositionAndRotationDirect` /
+   `forceSetPosition` are exactly the writes to replay onto a hijacked actor.
+
+This makes address mapping + ghost a "read the map" job, not "reverse blind."
+
+## Build-ID table (confirm region against your console)
+
+NSO build IDs cheat tables/patches are keyed by; **region-specific** (US/EU/JP differ) —
+verify against the BID atop the EdiZon-SE overlay in-game.
 
 | Version | Build ID | Source |
 |---------|----------|--------|
@@ -62,49 +62,32 @@ NSO build IDs cheat tables/patches are keyed by. Build IDs are **region-specific
 | 1.1.1 | `168DD518D925C7A3` (also `9B4E43650501A4D4`, other region) | MaxLastBreath / Arithon |
 | 1.1.2 | `9A10ED9435C06733` | MaxLastBreath |
 | 1.2.0 | `6F32C68DD3BC7D77AA714B80E92A096A737CDA77` | UltraCam pchtxt |
-| **1.4.2** | **`5CB42B1CF25469FB0635FD046453D843C18BC8AB`** | user IPS (region TBD) |
+| **1.2.1 (TARGET)** | **TBD — confirm on console / from totk_syms author's dump** | — |
+| 1.4.2 | `5CB42B1CF25469FB0635FD046453D843C18BC8AB` | (old target; historical) |
 
-- Our target's ID goes in `config/addresses.1.4.2.json` `build_id` once confirmed.
-- Cheat `.txt` files must be named `<BID>.txt` in `atmosphere/contents/0100F2C0115B6000/cheats/`.
+Our confirmed 1.2.1 build ID goes in `config/addresses.1.2.1.json` `build_id`. Cheat
+`.txt` files must be named `<BID>.txt` in `atmosphere/contents/0100F2C0115B6000/cheats/`.
 
-## State of PUBLIC data-pointer availability (researched)
+## Secondary lead: "Moon Jump" pointer-chain shape (older version)
 
-**There is no clean, portable, public player-position *data pointer* for 1.4.2**, and
-little for older versions. What exists and why it falls short:
+Cross-check for the position struct shape (from an older cheat table, base offsets
+differ; useful only as a structural sanity check now that we have real symbols):
+```
+[main + base] -> +0xC8 -> +0x178 -> +0x30 -> (+0xFC) -> [+0x1D0] = Y position/velocity
+```
+X/Z should sit adjacent to Y in the same vec3.
 
-- **MaxLastBreath / Arithon / UltraCam cheat sets** (versions ≤1.3.x): all **code
-  patches** (`040E0000 <off> <instr>` / `040A0000 ...`) that NOP game code — NOT data
-  pointers. Even "movement speed" writes a code-region constant, not the player struct.
-- **FearLess Cheat Engine tables** (fearlessrevolution.com, Ryujinx): DO have real XYZ
-  teleport + health **pointers**, but are **emulator-only** (AOB scans, not portable to
-  an on-console sysmodule), login-walled, and versions ≤1.2.
-- **UltraCam freecam**: reads/writes player+camera position live, but the logic is in a
-  **compiled subsdk binary**, not readable pchtxt.
+## Why 1.2.1 over 1.4.2
 
-**Conclusion:** for 1.4.2 on-console we **port the Moon-Jump pointer-chain *structure*
-(above) and re-find the base pointer ourselves** via EdiZon-SE pointer scan + our
-record→analyze→confirm loop. The community gives us the struct *shape* and the *build
-ID*, not a ready-made 1.4.2 pointer.
+Public **code cheats** exist for many versions but are behavior patches, not data. Real
+**data pointers** are emulator-only (FearLess CE, ≤1.2) or absent for 1.4.2. But
+**named symbols + struct types exist for 1.2.1** (`totk_syms`), which is strictly better
+than a raw pointer: we can *derive* the pointer chain and struct offsets directly, and
+it also hands us the ghost-actor write functions. 1.2.1 wins decisively for an
+RE-driven project.
 
-### Sources to revisit
-- `github.com/MaxLastBreath/TOTK-mods` — upstream cheat repo (code patches, ≤1.3.x).
-- `github.com/Fl4sh9174/TOTK-mods` — UltraCam (freecam/position, compiled).
-- `fearlessrevolution.com` TOTK CE tables — real XYZ/health pointers (emulator, ≤1.2).
-- GBAtemp "ToTK Cheats – 1.4.2 only" (MopSec) — our version; watch for `58`-type pointer codes.
-
-## Leads to chase when the console is modded
-
-1. **MopSec's "ToTK Cheats – 1.4.2 only" (GBAtemp, Jun 2026)** — our exact version. If
-   it exposes the player pointer, it may hand us position directly.
-2. Check EdiZon-SE / Breeze cheat DBs for a **1.4.2 build ID** table (BID shows at the
-   top of the EdiZon overlay in-game).
-3. HP as *data* (not the code-patch "inf health") still needs finding — known max 3000,
-   steps on damage; our analyzer's tag-correlation handles it.
-
-## How this maps to our pipeline
-
-- The sysmodule resolves the **pointer chain** each frame (ASLR-safe), reads the vec3 +
-  rotation + HP, streams the region to the PC.
-- `config/addresses.1.4.2.json` stores the confirmed base pointer + offset chain +
-  field offsets — the schema already supports `pointer_chains`.
-- Reading/writing uses the same `dmnt` primitives these cheats use.
+### Sources
+- ⭐ `github.com/dt-12345/totk_syms` — 1.2.1 symbols + Ghidra `.gdt` (PRIMARY).
+- `github.com/zeldaret/botw` + `leoetlino/botw-re-notes` — sead-engine cross-reference.
+- `github.com/MaxLastBreath/TOTK-mods`, `Fl4sh9174/TOTK-mods` (UltraCam) — code cheats.
+- `fearlessrevolution.com` TOTK CE tables — emulator XYZ/health pointers (≤1.2).

@@ -28,9 +28,9 @@
 #define PC_PORT   9917
 #define PLAYER_ID 1
 
-// The player memory block to stream. Filled from addresses.1.4.2.json in Phase 2.
+// The player memory block to stream. Filled from addresses.1.2.1.json in Phase 2.
 #define REGION_BASE 0x0            // TODO: resolve via pointer chain (ASLR-safe)
-#define REGION_SIZE 128            // TODO: match addresses.1.4.2.json region.size
+#define REGION_SIZE 128            // TODO: match addresses.1.2.1.json region.size
 
 #pragma pack(push, 1)
 typedef struct {

@@ -99,12 +99,12 @@ Phase 0 (foundations / PC pipeline) — **✅ done & verified**: fake console �
 recorder → analyzer (finds 6/6 planted fields) → live map, plus an authoritative PC
 server relaying/validating two fake players. Console-dependent phases (real
 addresses, ghost actor, two-player sync) begin once the hardware is modded. Target
-game version is pinned to **1.4.2**.
+game version is pinned to **1.2.1**.
 
 ## Requirements
 
 - **PC tools:** Python 3.9+ (standard library only; `tkinter` for the visualizer).
-- **Console (later):** a hackable Switch running **Atmosphère** CFW, TOTK **1.4.2**,
+- **Console (later):** a hackable Switch running **Atmosphère** CFW, TOTK **1.2.1**,
   EdiZon-SE, devkitPro/libnx to build the sysmodule.
 
 ## ⚠️ Legal / disclaimer

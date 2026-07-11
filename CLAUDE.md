@@ -17,9 +17,12 @@ Switch-only players can join. See ROADMAP for phases and the platform tier (Phas
 
 ## Hard rules (do not violate)
 
-1. **Game version is pinned to EXACTLY 1.4.2.** Every TOTK patch relocates memory
-   addresses. Both/all consoles must run byte-identical 1.4.2. 1.4.3 exists — never
-   "update to latest." Block auto-updates. Treat updating as project-ending.
+1. **Game version is pinned to EXACTLY 1.2.1.** Every TOTK patch relocates memory
+   addresses. Both/all consoles must run byte-identical 1.2.1. **Chosen for the
+   `totk_syms` RE resource** — 136k named symbols + Ghidra struct types for 1.2.1
+   (see [docs/re-notes.md](docs/re-notes.md)), which de-risks both address mapping
+   AND the ghost actor. Newer versions exist (up to 1.4.3) — never "update to latest."
+   Block auto-updates. Treat updating as project-ending.
 2. **The Switch stays dumb; the PC holds the brains.** Keep the sysmodule tiny (read/
    write RAM + move bytes). All logic, validation, and state live on the PC.
 3. **Never write unvalidated data into game RAM.** Range-check every value against
@@ -38,7 +41,7 @@ Switch-only players can join. See ROADMAP for phases and the platform tier (Phas
 ## Repo layout
 
 - `config/` — version pin, wire-protocol v0 spec, address-map schemas (`sim_layout.json`
-  is the fake console's ground truth; `addresses.1.4.2.example.json` is the real
+  is the fake console's ground truth; `addresses.1.2.1.example.json` is the real
   template).
 - `pc-tools/` — Phase 0 pipeline, runnable now against a fake console:
   `fake_switch.py` (synthetic console), `recorder.py`, `analyzer.py` (address hunter),
@@ -46,7 +49,7 @@ Switch-only players can join. See ROADMAP for phases and the platform tier (Phas
 - `pc-server/` — `server.py`, the authoritative buffer/host (validates, tracks, relays).
 - `sysmodule/` — thin Atmosphère memory-pipe skeleton (C/libnx), built on-console later.
 - `docs/re-notes.md` — reverse-engineering intel (community pointer chains, format
-  primer, 1.4.2 leads) to jump-start the real address hunt. Hypotheses, not confirmed.
+  primer, 1.2.1 leads) to jump-start the real address hunt. Hypotheses, not confirmed.
 
 ## How to verify (there are two regimes)
 
@@ -122,7 +125,7 @@ simulate.
 
 - A server defines **ONE canonical, pre-merged modpack**: merged once by the host via
   **TKMM** (RESTBL-correct, load-order-resolved), identified by a **hash**.
-- **Version-lock everything to 1.4.2**; reject mismatches.
+- **Version-lock everything to 1.2.1**; reject mismatches.
 - On join, client reports its modpack hash; **mismatch → refuse to play** (kick) and
   offer the canonical pack.
 - Distribute the **pre-merged bytes** (drop into `atmosphere/contents/0100F2C0115B6000/`,

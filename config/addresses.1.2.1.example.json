@@ -1,6 +1,6 @@
 {
-  "_comment": "TEMPLATE for the REAL TOTK 1.4.2 address map. Copy to addresses.1.4.2.json and fill in once the console is modded and the record->analyze->confirm loop finds real offsets. Same schema as sim_layout.json so every tool works unchanged when you swap fake data for real memory.",
-  "game_version": "1.4.2",
+  "_comment": "TEMPLATE for the REAL TOTK 1.2.1 address map. Copy to addresses.1.2.1.json and fill in once the console is modded and the record->analyze->confirm loop finds real offsets. Same schema as sim_layout.json so every tool works unchanged when you swap fake data for real memory.",
+  "game_version": "1.2.1",
   "build_id": "TODO_from_console",
   "region": {
     "name": "main_player_block",

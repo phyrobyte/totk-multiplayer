@@ -53,5 +53,5 @@ Switch is even modded.
 1. Build & run the `sysmodule/` on the modded Switch (streams real RAM in the same format).
 2. `recorder.py` captures real sessions; you tap the on-console action tagger at events.
 3. `analyzer.py` proposes real offsets; you confirm them in EdiZon-SE.
-4. Fill `config/addresses.1.4.2.json`; point `visualizer.py --config` at it for a live
+4. Fill `config/addresses.1.2.1.json`; point `visualizer.py --config` at it for a live
    in-game position monitor. Everything downstream is already built.
