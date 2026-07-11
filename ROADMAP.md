@@ -275,6 +275,19 @@ now**, ahead of hardware — but each has a real wall to respect.
   servers register; clients list public servers or join private ones by code. Needs
   moderation + reporting. *[buildable now, console-independent]*
 
+**Client in-game UI — how (no game source needed).** We render UI at the CFW level via
+an **Atmosphère overlay (libtesla / Tesla-Menu / nx-ovlloader)** — the same tech
+EdiZon-SE uses to draw over any game (summon with L + D-Pad-Down + R3). Our UI is a
+libtesla `.ovl` (the *view*: server list, connect/disconnect, player roster, status,
+modpack-match) that talks to our sysmodule over **IPC**; the sysmodule holds state and
+talks to the PC server.
+- ✅ Pop-up menus/panels: server browser, join, roster, status — fully doable.
+- ⚠️ Limitation: a Tesla overlay is a **pop-up that backgrounds the game**, NOT woven
+  into the 3D scene. So no persistent in-world HUD / floating nametags over ghosts
+  during play (that needs the game's renderer — out of scope). Menu-style UX, not HUD.
+  Possible partial: a game-native nameplate on the ghost actor itself (speculative,
+  tied to Phase 3).
+
 **Risks specific to this tier:** a **public** listing sharply raises Nintendo-
 takedown exposure vs. a private repo (BotW's multiplayer scene was DMCA'd) — favor
 private/invite-first. N-ghost rendering on real hardware is unproven. A public list
